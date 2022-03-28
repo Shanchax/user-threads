@@ -1,3 +1,5 @@
 This Text file Created to list down all activites reagarding project.
 Small Changes to verify.
 All set to go.
+
+Task 1 ) understanding and writing thread_create 

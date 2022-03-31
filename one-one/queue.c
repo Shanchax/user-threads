@@ -65,18 +65,18 @@ int enqueue(QUEUE* queue, TPROC* elem){
 		parent->next = new;
 	}
 
-	queue_>size = queue->size + 1;
+	queue->size = queue->size + 1;
 
 	return 0;
 }
 
-TPROC dequeue*(QUEUE* queue){
+TPROC *dequeue(QUEUE* queue){
 	struct node* old_head = queue->head;
 	if(old_head == NULL || queue->size == 0){
 		return NULL;
 	}
 
-	queue->head = queue-head->next;
+	queue->head = queue->head->next;
 
 	queue->size = queue->size - 1;
 

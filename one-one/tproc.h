@@ -8,7 +8,7 @@ typedef struct {
 	
 	ucontext_t thread_context;
 
-	bool has_dynamic_stack;
+	int has_dynamic_stack;
 
 	void *(*target_function)(void*);
 

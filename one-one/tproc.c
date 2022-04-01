@@ -14,7 +14,7 @@ TPROC* create_tcb(void){
 }
 
 void delete_tcb(TPROC*block){
-	if(block->has_dynamic_stack){
+	if(block->has_dynamic_stack==1){
 		free(block->context.uc_stack.ss_sp);
 	}
 

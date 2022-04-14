@@ -29,6 +29,7 @@ static QUEUE *terminated_queue;
 int thread_create(void * (*target_function)(void *), void *argument);
 int thread_join(int thread_id, void **retval);
 void thread_kill(void* result));
+void thread_exit(void* result);
 static void thread_run(void);
 static int timer_init(void);
 static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context);
@@ -286,13 +287,43 @@ int thread_create(void * (*target_function)(void *), void *argument){
 static void thread_run(void){
     sigprof_lock();
     TPROC* local = current_running;
-    sigprof_unlock;
+    sigprof_unlock();
 
     //result is pointer to the return value of target function!
     void *result = local->target_function(local->argument);
     thread_exit(result);
 
 }
+
+void thread_exit(void *result){
+
+    if(current_running != NULL){
+        sigprof_lock();
+
+        current_running->return_value = result;
+
+        int ret_val = enqueue(terminated_queue , current_running);
+        if(ret_val != 0){
+            perror();
+            abort();
+        }
+
+        current_running = dequeue(ready_queue);
+        if(current_running == NULL){
+            exit();
+        }
+
+        setcontext(&current_running->thread_context);
+        
+    }else{
+        exit();
+    }
+    
+
+
+}
+
+
 
 
 

@@ -2,6 +2,7 @@
 
 #include<stdint.h>
 #include<ucontext.h>
+#include<setjmp.h>
 
 typedef struct {
 	int id;
@@ -13,6 +14,8 @@ typedef struct {
 	void *(*target_function)(void*);
 
 	void *argument;
+
+	sigjmp_buf env;
 
 	void *return_value;
 }TPROC;

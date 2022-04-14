@@ -133,6 +133,20 @@ static void sigprof_lock(void){
     
 }
 
+static void sigprof_unlock(void){
+    sigset_t *set;
+    sigemptyset(set);
+    sigaddset(set, SIGPROF);
+
+    ret_val = sigprocmask(SIG_UNBLOCK , set , NULL);
+    if(ret_val == -1)
+        perror();
+        return errno;
+
+    
+}
+
+
 
 
 

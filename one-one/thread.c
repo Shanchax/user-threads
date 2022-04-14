@@ -28,6 +28,9 @@ void thread_kill(void* result));
 static int timer_init(void);
 static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context);
 
+static void sigprof_lock(void);
+static void sigprof_unlock(void);
+
 
 int thread_create(void * (*target_function)(void *), void *argument){
     return 0;
@@ -110,6 +113,27 @@ static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context){
         return errno;
 
     }
+
+//blocking SIGPROF is a must while creation of thread!!
+//why? because we don't want thread creation to be 
+//interrupteed by SIGPROF. So, we will use "sigprocmask",under a 
+//wrapper functions : sigprof_lock, sigprof_unlock
+
+
+static void sigprof_lock(void){
+    sigset_t *set;
+    sigemptyset(set);
+    sigaddset(set, SIGPROF);
+
+    ret_val = sigprocmask(SIG_BLOCK , set , NULL);
+    if(ret_val == -1)
+        perror();
+        return errno;
+
+    
+}
+
+
 
 
 

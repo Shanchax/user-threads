@@ -13,11 +13,20 @@
 #define ERR_SIGPROF 9001 //random number
 #define INTERVAL 100000
 
+//will point to the thread that is currently running;
+static TPROC *current_running;
+
+static QUEUE *ready_queue;
+
+static QUEUE *terminated_queue;
+
+
 //prototypes:
 int thread_create(void * (*target_function)(void *), void *argument);
 int thread_join(int thread_id, void **retval);
 void thread_kill(void* result));
 static int timer_init(void);
+static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context);
 
 
 int thread_create(void * (*target_function)(void *), void *argument){
@@ -33,7 +42,6 @@ void thread_kill(void* result)){
 
 //https://stackoverflow.com/questions/2086126/need-programs-that-illustrate-use-of-settimer-and-alarm-functions-in-gnu-c
 static int timer_init(void){
-
     
     sigset_t allsignals;
 
@@ -51,7 +59,7 @@ static int timer_init(void){
     timeout_val.it_value.tv_usec = 1;
      
 
-    alarm.sa_sigaction = new_signal_handler;
+    alarm.sa_sigaction = new_sigprof_handler;
     alarm.sa_mask = allsignals;
     alarm.sa_flags = SA_SIGINFO;
 
@@ -74,8 +82,40 @@ static int timer_init(void){
     return 1;
 
 
+}
+
+static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context){
+
+    //first, we will store the current context of signalhandler
+    ucontext_t *backup = &current_running->thread_context;
+    ucontext_t *new = (ucontext_t *)context;
+
+    //"backup" is where we will store current thread's context
+    backup->uc_flags = new->uc_flags;
+    backup->uc_link = new->uc_link;
+    backup->uc_mcontext = new->uc_mcontext;
+    backup->uc_sigmask = new->uc_sigmask;
+
+    if( enqueue(ready_queue , current_running) != 0)
+        perror();
+        return errno;
+
+    if( (current_running = dequeue(ready_queue))==NULL)
+        perror();
+        return errno;
+
+    int ret_val = setcontext(&current_running->thread_context;
+    if(ret_val == -1){
+        perror();
+        return errno;
+
+    }
+
+
+
 
 
 
 
 }
+

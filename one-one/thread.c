@@ -1,3 +1,4 @@
+
 #include "thread.h"
 #include "tproc.h"
 #include "queue.h"
@@ -32,6 +33,8 @@ static void sigprof_lock(void);
 static void sigprof_unlock(void);
 
 static int queue_init(void);
+
+static int context_of_first_thread(void);
 
 
 int thread_create(void * (*target_function)(void *), void *argument){
@@ -169,6 +172,32 @@ static int queue_init(void){
     return 1;
 
 }
+
+//now that we have our queues initialized, we need to think 
+//about the context of the very first thread tha will run!!!
+
+static int context_of_first_thread(void){
+    TPROC* dummy;
+    dummy = create_tcb();
+    if(dummy == NULL)
+        return 0;
+
+    ret_val = getcontext(&dummy->thread_context);
+    if(ret_val == -1)
+        delete_tcb(dummy);
+        perror("getcontext failed");
+        return errno;
+    
+    current_running = dummy;
+
+    return true;
+
+
+}
+
+
+
+
 
 
 

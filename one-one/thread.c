@@ -31,6 +31,8 @@ static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context);
 static void sigprof_lock(void);
 static void sigprof_unlock(void);
 
+static int queue_init(void);
+
 
 int thread_create(void * (*target_function)(void *), void *argument){
     return 0;
@@ -114,6 +116,8 @@ static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context){
 
     }
 
+}    
+
 //blocking SIGPROF is a must while creation of thread!!
 //why? because we don't want thread creation to be 
 //interrupteed by SIGPROF. So, we will use "sigprocmask",under a 
@@ -146,14 +150,32 @@ static void sigprof_unlock(void){
     
 }
 
+//before creating thread, read queue and terminated queue need
+//to be initialized. this is done here, in 
 
+static int queue_init(void){
+    ready_queue = queue_create();
 
+    terminated_queue = queue_create();
 
+    if(ready_queue == NULL)
+        return 0;
+    
+    if(terminated_queue == NULL)
+        delete_queue(ready_queue);
+        return 0;
+    
 
-
-
-
-
+    return 1;
 
 }
+
+
+
+
+
+
+
+
+
 

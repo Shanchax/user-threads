@@ -47,7 +47,7 @@ int thread_create(void * (*target_function)(void *), void *argument){
 int thread_join(int thread_id, void **retval){
     return 0;
 }
-void thread_kill(void* result)){
+void thread_kill(void* result){
 
 }
 

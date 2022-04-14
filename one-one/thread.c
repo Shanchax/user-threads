@@ -46,7 +46,7 @@ static int allocstack(TPROC* block);
 int thread_join(int thread_id, void **retval){
     return 0;
 }
-void thread_kill(void* result)){
+void thread_kill(void* result){
 
 }
 

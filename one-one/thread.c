@@ -29,6 +29,7 @@ static QUEUE *terminated_queue;
 int thread_create(void * (*target_function)(void *), void *argument);
 int thread_join(int thread_id, void **retval);
 void thread_kill(void* result));
+static void thread_run(void);
 static int timer_init(void);
 static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context);
 
@@ -41,9 +42,7 @@ static int context_of_first_thread(void);
 static int allocstack(TPROC* block);
 
 
-int thread_create(void * (*target_function)(void *), void *argument){
-    return 0;
-}
+
 int thread_join(int thread_id, void **retval){
     return 0;
 }
@@ -222,9 +221,69 @@ static int allocstack(TPROC* block){
     block->thread_context.uc_stack.ss_sp = stack;
     block->has_dynamic_stack = 1;
 
+    //not to sure how to assign uc_link!!Ask sir
+
     return 1;
     
 }
+
+//statically incrementing id of thread. id is not allocated using clone
+int thread_create(void * (*target_function)(void *), void *argument){
+    sigprof_lock();
+
+    static int initval = 0;
+
+    if(!initval){
+        if(!queue_init()){
+            perror();
+            return errno;
+        }
+        if(!context_of_first_thread()){
+            perror();
+            return errno;
+
+        }
+        if(!timer_init()){
+            perror();
+            return errno;
+        }
+
+        initval = 1;
+  
+    }
+
+    TPROC* new;
+    new = create_tcb();
+    if(new == NULL){
+        perror("failed to create new tproc");
+        return errno;
+    }
+
+    ret_val = getcontext(&new->thread_context);
+    if(ret_val == -1){
+        perror("failed to get context of dummy thread");
+        delete_tcb(new);
+        return errno;
+    }
+
+    if(!allocstack(new)){
+        perror("failed to allocate stack for thread");
+        delete_tcb(new);
+        return errno;
+
+    }
+
+    makecontext(&new->thread_context,thread_run, 1, new->id);
+
+    new->target_function = target_function;
+    new->argument = argument;
+
+    sigprof_unlock();
+    return new->id;
+
+}
+
+
 
 
 

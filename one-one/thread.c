@@ -11,8 +11,11 @@
 
 #include<signal.h>
 
+#include <sys/mman.h>
+
 #define ERR_SIGPROF 9001 //random number
 #define INTERVAL 100000
+#define STACKSIZE (1024*1024) 
 
 //will point to the thread that is currently running;
 static TPROC *current_running;
@@ -35,6 +38,7 @@ static void sigprof_unlock(void);
 static int queue_init(void);
 
 static int context_of_first_thread(void);
+static int allocstack(TPROC* block);
 
 
 int thread_create(void * (*target_function)(void *), void *argument){
@@ -194,6 +198,38 @@ static int context_of_first_thread(void){
 
 
 }
+
+//allocatinf stack for newly created thread.
+
+static int allocstack(TPROC* block){
+
+    void* stack = NULL;
+    stack = mmap(0, STACKSIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    if(stack == MAP_FAILED){
+        perror();
+        return errno;
+        //return 0?
+    }
+    if(mprotect(stack , STACKSIZE , PROT_NONE)){
+        munmap(stack, STACKSIZE);
+        perror();
+        return errno;
+        //return 0?
+    }
+
+    block->thread_context.uc_stack.ss_flags = 0;
+    block->thread_context.uc_stack.ss_size = STACKSIZE;
+    block->thread_context.uc_stack.ss_sp = stack;
+    block->has_dynamic_stack = 1;
+
+    return 1;
+    
+    
+}
+
+
+
+
 
 
 

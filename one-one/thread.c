@@ -283,6 +283,22 @@ int thread_create(void * (*target_function)(void *), void *argument){
 
 }
 
+static void thread_run(void){
+    sigprof_lock();
+    TPROC* local = current_running;
+    sigprof_unlock;
+
+    //result is pointer to the return value of target function!
+    void *result = local->target_function(local->argument);
+    thread_exit(result);
+
+}
+
+
+
+
+
+
 
 
 

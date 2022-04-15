@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include <sys/mman.h>
 
-#define STACKSIZE (1024*1024)
+#define STACKSIZE (64*1024)
 
 TPROC* create_tcb(void){
 	static int next_id = 1;

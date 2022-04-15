@@ -15,7 +15,7 @@
 
 #define ERR_SIGPROF 9001 //random number
 #define INTERVAL 100000
-#define STACKSIZE (1024*1024) 
+#define STACKSIZE (64*1024) 
 
 //will point to the thread that is currently running;
 static TPROC *current_running;
@@ -199,7 +199,7 @@ static int context_of_first_thread(void){
 
 }
 
-//allocatinf stack for newly created thread.
+//allocating stack for newly created thread.
 
 static int allocstack(TPROC* block){
 
@@ -285,8 +285,6 @@ int thread_create(void * (*target_function)(void *), void *argument){
         return -1;
     }
 
-
-
     sigprof_unlock();
     return new->id;
 
@@ -327,7 +325,6 @@ void thread_exit(void *result){
         exit();
     }
     
-
 
 }
 

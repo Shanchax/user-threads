@@ -260,7 +260,7 @@ int thread_create(void * (*target_function)(void *), void *argument){
         return errno;
     }
 
-    ret_val = getcontext(&new->thread_context);
+    int ret_val = getcontext(&new->thread_context);
     if(ret_val == -1){
         perror("failed to get context of dummy thread");
         delete_tcb(new);
@@ -278,6 +278,14 @@ int thread_create(void * (*target_function)(void *), void *argument){
 
     new->target_function = target_function;
     new->argument = argument;
+
+    int ret = enqueue(ready_queue , new);
+    if(ret != 0){
+        perror("failed to add to ready_queue");
+        return -1;
+    }
+
+
 
     sigprof_unlock();
     return new->id;

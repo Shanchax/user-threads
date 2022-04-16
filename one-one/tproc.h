@@ -6,6 +6,7 @@
 
 //define state which will decide whether our thread is
 //joinable or not
+//join-state
 
 #define JOINABLE 1
 #define DETACHED 2
@@ -30,6 +31,12 @@ typedef struct {
 
 	void *argument;
 
+	int join_state;
+
+	int thread_status;
+
+	int wait_id;
+	
 	sigjmp_buf env;
 
 	void *return_value;

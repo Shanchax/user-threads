@@ -27,8 +27,8 @@ static QUEUE *terminated_queue;
 
 //prototypes:
 int thread_create(void * (*target_function)(void *), void *argument);
-int thread_join(int thread_id, void **retval);
-void thread_kill(void* result));
+int thread_join(TPROC* thread, void **retval);
+void thread_kill(void* result);
 void thread_exit(void* result);
 static void thread_run(void);
 static int timer_init(void);
@@ -44,9 +44,7 @@ static int allocstack(TPROC* block);
 
 
 
-int thread_join(int thread_id, void **retval){
-    return 0;
-}
+
 void thread_kill(void* result){
 
 }
@@ -276,6 +274,9 @@ int thread_create(void * (*target_function)(void *), void *argument){
 
     makecontext(&new->thread_context,thread_run, 1, new->id);
 
+    new->join_state = JOINABLE;
+    new->thread_status = RUNNABLE;
+    new->wait_id = -1;
     new->target_function = target_function;
     new->argument = argument;
 
@@ -289,7 +290,8 @@ int thread_create(void * (*target_function)(void *), void *argument){
     return new->id;
 
 }
-
+//every thread is bound to call thread_exit!except the 
+//first one that we created using makefirstcontext.
 static void thread_run(void){
     sigprof_lock();
     TPROC* local = current_running;
@@ -307,8 +309,9 @@ void thread_exit(void *result){
         sigprof_lock();
 
         current_running->return_value = result;
-
+        current_running->thread_status = TERMINATED;
         int ret_val = enqueue(terminated_queue , current_running);
+        
         if(ret_val != 0){
             perror();
             abort();
@@ -327,6 +330,60 @@ void thread_exit(void *result){
     
 
 }
+
+int thread_join(TPROC* thread, void **retval){
+
+    if(thread->thread_id > 0){
+
+        sigprof_lock();
+
+        if(thread->join_state == DETACHED){
+            sigprof_unlock();
+            return EINVAL;
+        }
+
+        if(thread->id == current_running->wait_id){
+            perror("deadlock");
+            return EDEADLK;
+
+        }
+       
+       if(thread->wait_id != -1){
+           fprintf("already joined");
+           return EINVAL;
+
+       }
+
+       if(thread->join_state == JOINABLE){
+
+           thread->wait_id = current_running->id;
+           current_running->thread_status = WAITING;
+           sigprof_unlock();
+
+           while (thread->thread_status != TERMINATED)
+           {
+               sigprof_lock();
+           }
+
+           if(retval){
+               *retval = thread->return_value;
+
+           }
+           
+
+       }
+
+
+
+    }else{
+        errno = EINVAL;
+        
+        return -1;
+    }
+
+}
+
+
 
 
 

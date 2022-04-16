@@ -4,6 +4,21 @@
 #include<ucontext.h>
 #include<setjmp.h>
 
+//define state which will decide whether our thread is
+//joinable or not
+
+#define JOINABLE 1
+#define DETACHED 2
+
+//status of thread: could be running, runnable, waiting, 
+
+#define RUNNING 1
+#define RUNNABLE 2
+#define TERMINATED 3
+#define WAITING 4
+#define JOINED 5
+
+
 typedef struct {
 	int id;
 	

@@ -1,6 +1,6 @@
 
 #include "thread.h"
-#include "tproc.h"
+//#include "tproc.h"
 #include "queue.h"
 
 #include <errno.h>
@@ -57,11 +57,11 @@ static int timer_init(void){
 
     sigfillset(&allsignals);
 
-    const struct sigaction alarm;
+    struct sigaction alarm;
 
     struct sigaction oldact;
 
-    const struct itimerval timeout_val;
+    struct itimerval timeout_val;
 
     timeout_val.it_interval.tv_sec = 0;
     timeout_val.it_interval.tv_usec = INTERVAL;
@@ -79,12 +79,12 @@ static int timer_init(void){
         perror("Changing of sigaction on receipt of SIGPROF failed");
         return ERR_SIGPROF;
 
-    int ret_timer = setitimer(ITIMER_PROF, &timeout_val , NULL)
+    int ret_timer = setitimer(ITIMER_PROF, &timeout_val , NULL);
     if(ret_timer == -1){
         if(sigaction(SIGPROF , &alarm , &oldact) == -1)
             perror("Ooops");
             return ERR_SIGPROF;
-            exit();
+            exit(EXIT_SUCCESS);
 
         return 0;    
     }
@@ -107,16 +107,16 @@ static void new_sigprof_handler(int signum , siginfo_t *nfo , void* context){
     backup->uc_sigmask = new->uc_sigmask;
 
     if( enqueue(ready_queue , current_running) != 0)
-        perror();
+        perror("error");
         return errno;
 
     if( (current_running = dequeue(ready_queue))==NULL)
-        perror();
+        perror("error");
         return errno;
 
-    int ret_val = setcontext(&current_running->thread_context;
+    int ret_val = setcontext(&current_running->thread_context);
     if(ret_val == -1){
-        perror();
+        perror("error");
         return errno;
 
     }
@@ -134,9 +134,9 @@ static void sigprof_lock(void){
     sigemptyset(set);
     sigaddset(set, SIGPROF);
 
-    ret_val = sigprocmask(SIG_BLOCK , set , NULL);
+    int ret_val = sigprocmask(SIG_BLOCK , set , NULL);
     if(ret_val == -1)
-        perror();
+        perror("error");
         return errno;
 
     
@@ -147,9 +147,9 @@ static void sigprof_unlock(void){
     sigemptyset(set);
     sigaddset(set, SIGPROF);
 
-    ret_val = sigprocmask(SIG_UNBLOCK , set , NULL);
+    int ret_val = sigprocmask(SIG_UNBLOCK , set , NULL);
     if(ret_val == -1)
-        perror();
+        perror("error");
         return errno;
 
     
@@ -184,7 +184,7 @@ static int context_of_first_thread(void){
     if(dummy == NULL)
         return 0;
 
-    ret_val = getcontext(&dummy->thread_context);
+    int ret_val = getcontext(&dummy->thread_context);
     if(ret_val == -1)
         delete_tcb(dummy);
         perror("getcontext failed");
@@ -192,7 +192,7 @@ static int context_of_first_thread(void){
     
     current_running = dummy;
 
-    return true;
+    return 1;
 
 
 }
@@ -204,13 +204,13 @@ static int allocstack(TPROC* block){
     void* stack = NULL;
     stack = mmap(0, STACKSIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
     if(stack == MAP_FAILED){
-        perror();
+        perror("error");
         return errno;
         //return 0?
     }
     if(mprotect(stack , STACKSIZE , PROT_NONE)){
         munmap(stack, STACKSIZE);
-        perror();
+        perror("error");
         return errno;
         //return 0?
     }
@@ -234,16 +234,16 @@ int thread_create(void * (*target_function)(void *), void *argument){
 
     if(!initval){
         if(!queue_init()){
-            perror();
+            perror("error");
             return errno;
         }
         if(!context_of_first_thread()){
-            perror();
+            perror("error");
             return errno;
 
         }
         if(!timer_init()){
-            perror();
+            perror("error");
             return errno;
         }
 
@@ -313,19 +313,19 @@ void thread_exit(void *result){
         int ret_val = enqueue(terminated_queue , current_running);
         
         if(ret_val != 0){
-            perror();
+            perror("error");
             abort();
         }
 
         current_running = dequeue(ready_queue);
         if(current_running == NULL){
-            exit();
+            exit(EXIT_SUCCESS);
         }
 
         setcontext(&current_running->thread_context);
         
     }else{
-        exit();
+        exit(EXIT_SUCCESS);
     }
     
 
@@ -333,7 +333,7 @@ void thread_exit(void *result){
 
 int thread_join(TPROC* thread, void **retval){
 
-    if(thread->thread_id > 0){
+    if(thread->id> 0){
 
         sigprof_lock();
 
@@ -349,7 +349,7 @@ int thread_join(TPROC* thread, void **retval){
         }
        
        if(thread->wait_id != -1){
-           fprintf("already joined");
+           perror("already joined");
            return EINVAL;
 
        }
@@ -369,6 +369,8 @@ int thread_join(TPROC* thread, void **retval){
                *retval = thread->return_value;
 
            }
+
+           sigprof_unlock();
            
 
        }
@@ -377,7 +379,7 @@ int thread_join(TPROC* thread, void **retval){
 
     }else{
         errno = EINVAL;
-        
+
         return -1;
     }
 

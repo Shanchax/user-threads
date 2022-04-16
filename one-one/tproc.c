@@ -5,14 +5,14 @@
 #define STACKSIZE (64*1024)
 
 TPROC* create_tcb(void){
-	static int next_id = 1;
+	static int next_id;
 	TPROC* new;
 
 	if((new = calloc(1,sizeof(TPROC))) == NULL){
 		return NULL;
 	}
 	
-	new->id = next_id + 1;
+	new->id = next_id++;
 	return new;
 }
 

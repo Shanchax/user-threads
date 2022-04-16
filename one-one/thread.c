@@ -1,6 +1,6 @@
 
 #include "thread.h"
-//#include "tproc.h"
+// #include "tproc.h"
 #include "queue.h"
 
 #include <errno.h>
@@ -372,9 +372,7 @@ int thread_join(TPROC* thread, void **retval){
 
            sigprof_unlock();
            
-
        }
-
 
 
     }else{

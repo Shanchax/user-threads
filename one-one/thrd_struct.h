@@ -23,11 +23,14 @@ typedef struct my_thread{
     void *args;
     //pointer to return value of target function
     void *ret_val;
-    /*Flag to check whether thread is running/executing or already executed
+    /*
+      Flag to check whether thread is running/executing or already executed
         is_completed == 0 : Thread already running or executing
         is completed == 1 : Thread completed its execution
     */
     int is_completed;
+    //SP and PC are saved when sigsetjump called
+    sigjmp_buf environment;    
     //necessary procedure (must) to be taken to perform blocking
     u_int32_t futex_block;
     //maximum size of stack allocated for thread stack     

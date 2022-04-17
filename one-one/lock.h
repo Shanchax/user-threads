@@ -41,5 +41,31 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *);
 int mythread_spinlock_unlock_released(mythread_spinlock *);
 
 
+//Reference - https://github.com/mit-pdos/xv6-public (XV6 Context Saving and then switching)
+
+//Responsible for Flag in currently passed context and return previously set value
+static int set_context_xchg(int *flag_cxt) {
+    int old_set_value;
+    int set_bit = 1;
+    asm("lock xchgl %0, %1"
+        : "+m"(*flag_cxt), "=a"(old_set_value)
+        : "1"(set_bit)
+        : "cc");
+    return old_set_value;
+}
+
+
+//Responsile for waking up single process in futex mass
+static int futex_wake_proc(void *address) {
+    return syscall(SYS_futex, address, FUTEX_WAKE, 1, NULL, NULL, 0);
+}
+//Responsible system call to make parent waiting till futex_val not changes to zero
+static int futex_halt_till(void *address, int thread_id) {
+    return syscall(SYS_futex, address,FUTEX_WAIT, thread_id, NULL, NULL, 0);
+}
+
+
+
+
 
 

@@ -1,7 +1,8 @@
+#include "my_thread.h"
 //Structure of Queue
 typedef struct queue {
-    thread *front;
-    thread *rear;
+    my_thread *front;
+    my_thread *rear;
 } queue;
 
 
@@ -10,7 +11,7 @@ typedef struct queue {
 //Initiallization of queue
 void init_queue();
 //For insertion of node structure in queue
-void enqueue(node *);
+void enqueue(my_thread *);
 //Checking whether que is empty or not
 int queue_Empty();
 

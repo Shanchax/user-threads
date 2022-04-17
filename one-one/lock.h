@@ -59,7 +59,7 @@ static int set_context_xchg(int *flag_cxt) {
 static int futex_wake_proc(void *address) {
     return syscall(SYS_futex, address, FUTEX_WAKE, 1, NULL, NULL, 0);
 }
-//Responsible system call to make parent waiting till futex_val not changes to zero
+//Responsible system call to make parent waiting till futex_block not changes to zero
 static int futex_halt_till(void *address, int thread_id) {
     return syscall(SYS_futex, address,FUTEX_WAIT, thread_id, NULL, NULL, 0);
 }

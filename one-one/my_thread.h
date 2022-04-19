@@ -6,7 +6,7 @@
 
 
 //Threads wrapper for initialization of threads queue
-void mythread_init()
+void mythread_init();
 //Defination for Thread create
 int mythread_create(my_thread* , void *(*target_funtion)(void *), void *);
 //Function resposible for execution of function passed to thread

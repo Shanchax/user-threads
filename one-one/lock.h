@@ -63,9 +63,3 @@ static int futex_wake_proc(void *address) {
 static int futex_halt_till(void *address, int thread_id) {
     return syscall(SYS_futex, address,FUTEX_WAIT, thread_id, NULL, NULL, 0);
 }
-
-
-
-
-
-

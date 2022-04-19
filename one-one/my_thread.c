@@ -19,11 +19,11 @@ int mythread_run(void *cur_thrd) {
     enqueue(new_thrd);
     if (setjmp(new_thrd->environment) != 0) {
         printf("Executing Thread with thread_id- %d , exited safely\n", new_thrd->thread_id);
-        new_thrd->execution = 1;
+        new_thrd->is_completed = 1;
     }
     else{
         new_thrd->ret_val = new_thrd->target_function(new_thrd->args);
-        new_thrd->execution = 1;
+        new_thrd->is_completed = 1;
     }
     return 0;
 }
@@ -49,7 +49,7 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
     thread->args = args;
     thread->is_completed = 0;
     thread->parent_id = getpid();    
-    thread->stach_head = my_stack_head_ptr;
+    thread->stack_head = my_stack_head_ptr;
     thread->next = NULL;
     thread->thread_id = clone(mythread_run, my_stack_head_ptr, CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | 
                                     CLONE_SIGHAND | CLONE_THREAD | CLONE_PARENT_SETTID | 

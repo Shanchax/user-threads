@@ -1,7 +1,7 @@
 #include "thrd_struct.h"
 
 
-#define MAXSTACKSIZE (1024 * 1024)
+#define MAXSTACKSIZE (64 * 1024)
 
 
 
@@ -17,3 +17,9 @@ int mythread_join(my_thread*, void **);
 void mythread_exit(void *);
 //Defination for Thread Kill
 int mythread_kill(my_thread, int);
+//Function for setting thread and returning in thread create 
+my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack);
+//Responsible for returning thread block 
+my_thread *mythread_ret_val();
+//Function responsible for Thread Joinong purpose
+int mythread_join(my_thread *thread, void **return_value);

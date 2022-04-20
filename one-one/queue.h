@@ -18,3 +18,21 @@ int queue_Empty();
 
 // Queue for threads created
 queue *queue_of_threads;
+
+//Thread with defined thread_id return else
+my_thread *get_thrd_node(int thread_id) {
+    queue *que = queue_of_threads;
+    my_thread *ptr;
+    ptr = que->front;
+    if (ptr->thread_id == thread_id)
+            return ptr;
+    else{
+        ptr=ptr->next;
+    }
+    while (ptr != que->front){
+        if (ptr->thread_id == thread_id)
+            return ptr;
+        ptr = ptr->next;
+    }
+    return NULL;
+}

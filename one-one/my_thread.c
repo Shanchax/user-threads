@@ -33,16 +33,8 @@ void mythread_init(){
     init_queue();
 }
 
-//Thread Creation with routine Function
-int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args) {
-    char *mystack;
+my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack){
     char *my_stack_head_ptr;
-    mystack = (char *)malloc(MAXSTACKSIZE);
-
-    if (!mystack) {
-        fprintf(stderr, "Unalbe to allocate stack.\n");
-        exit(1);
-    }
     my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
     thread->size_of_stack = MAXSTACKSIZE;
     thread->target_function = target_func;
@@ -51,7 +43,22 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
     thread->parent_id = getpid();    
     thread->stack_head = my_stack_head_ptr;
     thread->next = NULL;
-    thread->thread_id = clone(mythread_run, my_stack_head_ptr, CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | 
+}
+//Thread Creation with routine Function
+int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args) {
+    char *mystack;
+    char *my_stack_head_ptr;
+    my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
+    mystack = (char *)malloc(MAXSTACKSIZE);
+
+    if (!mystack) {
+        fprintf(stderr, "Unalbe to allocate stack.\n");
+        exit(1);
+    }
+    thread=set_thrd(thread,target_func,args,mystack);
+    
+    thread->thread_id = clone(mythread_run, my_stack_head_ptr, 
+                                    CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | 
                                     CLONE_SIGHAND | CLONE_THREAD | CLONE_PARENT_SETTID | 
                                     CLONE_CHILD_CLEARTID, thread, &thread->futex_block, thread, &thread->futex_block);
     if (thread->thread_id == -1) {
@@ -61,4 +68,22 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
         exit(1);
     }
     return thread->thread_id;
+}
+
+my_thread *mythread_ret_val() {
+    int thread_id = gettid();
+    if (thread_id== getpid())
+        return NULL;
+    my_thread *thrd = get_thrd_node(thread_id);
+    return thrd;
+}
+
+int mythread_join(my_thread *thread, void **return_value) {
+    if (thread->is_completed != 1){
+        futex_halt_till(&thread->futex_block, thread->thread_id);
+        if (return_value != NULL)
+            *return_value = thread->ret_val;
+        free((void *)(thread->stack_head + 1 - MAXSTACKSIZE));
+    }
+    return 0;
 }

@@ -21,18 +21,20 @@ queue *queue_of_threads;
 
 //Thread with defined thread_id return else
 my_thread *get_thrd_node(int thread_id) {
+    if(!thread_id)
+        return NULL;
+    my_thread *thrd_blk;
     queue *que = queue_of_threads;
-    my_thread *ptr;
-    ptr = que->front;
-    if (ptr->thread_id == thread_id)
-            return ptr;
+    thrd_blk = que->front;
+    if (thrd_blk->thread_id == thread_id)
+            return thrd_blk;
     else{
-        ptr=ptr->next;
+        thrd_blk=thrd_blk->next;
     }
-    while (ptr != que->front){
-        if (ptr->thread_id == thread_id)
-            return ptr;
-        ptr = ptr->next;
+    while (thrd_blk != que->front){
+        if (thrd_blk->thread_id == thread_id)
+            return thrd_blk;
+        thrd_blk = thrd_blk->next;
     }
     return NULL;
 }

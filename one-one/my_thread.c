@@ -34,9 +34,6 @@ void mythread_init(){
 }
 
 my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack){
-    //char *my_stack_head_ptr;
-    //my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
-    //thread->size_of_stack = MAXSTACKSIZE;
     thread->target_function = target_func;
     thread->args = args;
     thread->is_completed = 0;
@@ -60,9 +57,10 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
     
     
     thread->thread_id = clone(mythread_run, my_stack_head_ptr, 
-                                    CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | 
-                                    CLONE_SIGHAND | CLONE_THREAD | CLONE_PARENT_SETTID | 
-                                    CLONE_CHILD_CLEARTID, thread, &thread->futex_block, thread, &thread->futex_block);
+                                CLONE_VM | CLONE_FS | CLONE_FILES | 
+                                CLONE_SYSVSEM | CLONE_SIGHAND | CLONE_THREAD |
+                                CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID, 
+                                    thread, &thread->futex_block, thread, &thread->futex_block);
     if (thread->thread_id == -1) {
         printf("Not Able to Create User Thread\n");
         fprintf(stderr, "Error Generated While Clonning: \n");

@@ -5,19 +5,19 @@
 #include <sys/syscall.h>
 
 typedef struct mythread_spinlock {
-    /*This is flag responsible for Spinlock
-        flag : 1 == Spinlock Aquired
-        flag : 0 == Spinlock Released or Unblocked 
+    /*This is lock_status responsible for Spinlock
+        lock_status : 1 == Spinlock Aquired
+        lock_status : 0 == Spinlock Released or Unblocked 
     */
-    int flag; 
+    int lock_status; 
 } mythread_spinlock;
 
 typedef struct myhread_mutex {
-    /*This is flag responsible for Spinlock
-        flag : 1 == Spinlock Aquired
-        flag : 0 == Spinlock Released or Unblocked 
+    /*This is lock_status responsible for Spinlock
+        lock_status : 1 == Spinlock Aquired
+        lock_status : 0 == Spinlock Released or Unblocked 
     */
-    int flag;
+    int lock_status;
 } mythread_mutex;
 
 
@@ -47,10 +47,7 @@ int mythread_mutex_lock_released(mythread_mutex *);
 static int set_context_xchg(int *flag_cxt) {
     int old_set_value;
     int set_bit = 1;
-    asm("lock xchgl %0, %1"
-        : "+m"(*flag_cxt), "=a"(old_set_value)
-        : "1"(set_bit)
-        : "cc");
+    asm("lock xchgl %0, %1":"+m"(*flag_cxt),"=a"(old_set_value):"1"(set_bit):"cc");
     return old_set_value;
 }
 

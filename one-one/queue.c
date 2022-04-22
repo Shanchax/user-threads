@@ -38,7 +38,7 @@ void print_cur_thrds() {
     queue *que = queue_of_threads;
     thrd_blk = que->front;
     if (thrd_blk->is_completed == 1){
-            print("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
+            printf("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
             thrd_blk = thrd_blk->next;
     }
     else{
@@ -46,7 +46,26 @@ void print_cur_thrds() {
     }
     while (thrd_blk != que->front){
         if (thrd_blk->is_completed == 1)
-            print("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
+            printf("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
+        thrd_blk = thrd_blk->next;
+    }
+}
+
+//Thread with defined thread_id return else
+my_thread *get_thrd_node(int thread_id) {
+    if(!thread_id)
+        return NULL;
+    my_thread *thrd_blk;
+    queue *que = queue_of_threads;
+    thrd_blk = que->front;
+    if (thrd_blk->thread_id == thread_id)
+            return thrd_blk;
+    else{
+        thrd_blk=thrd_blk->next;
+    }
+    while (thrd_blk != que->front){
+        if (thrd_blk->thread_id == thread_id)
+            return thrd_blk;
         thrd_blk = thrd_blk->next;
     }
     return NULL;

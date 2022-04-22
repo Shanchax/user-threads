@@ -21,22 +21,4 @@ void print_cur_thrds();
 // Queue for threads created
 queue *queue_of_threads;
 
-//Thread with defined thread_id return else
-my_thread *get_thrd_node(int thread_id) {
-    if(!thread_id)
-        return NULL;
-    my_thread *thrd_blk;
-    queue *que = queue_of_threads;
-    thrd_blk = que->front;
-    if (thrd_blk->thread_id == thread_id)
-            return thrd_blk;
-    else{
-        thrd_blk=thrd_blk->next;
-    }
-    while (thrd_blk != que->front){
-        if (thrd_blk->thread_id == thread_id)
-            return thrd_blk;
-        thrd_blk = thrd_blk->next;
-    }
-    return NULL;
-}
+my_thread *get_thrd_node(int);

@@ -34,28 +34,30 @@ void mythread_init(){
 }
 
 my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack){
-    char *my_stack_head_ptr;
-    my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
-    thread->size_of_stack = MAXSTACKSIZE;
+    //char *my_stack_head_ptr;
+    //my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
+    //thread->size_of_stack = MAXSTACKSIZE;
     thread->target_function = target_func;
     thread->args = args;
     thread->is_completed = 0;
-    thread->parent_id = getpid();    
-    thread->stack_head = my_stack_head_ptr;
+    thread->parent_id = getpid();  
     thread->next = NULL;
 }
 //Thread Creation with routine Function
 int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args) {
     char *mystack;
     char *my_stack_head_ptr;
-    my_stack_head_ptr = mystack  +  MAXSTACKSIZE  -  1;
     mystack = (char *)malloc(MAXSTACKSIZE);
+    my_stack_head_ptr = mystack + MAXSTACKSIZE  -  1;
+    
 
     if (!mystack) {
         fprintf(stderr, "Unalbe to allocate stack.\n");
         exit(1);
     }
+    thread->stack_head = my_stack_head_ptr;
     thread=set_thrd(thread,target_func,args,mystack);
+    
     
     thread->thread_id = clone(mythread_run, my_stack_head_ptr, 
                                     CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SYSVSEM | 

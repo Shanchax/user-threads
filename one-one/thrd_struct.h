@@ -38,5 +38,5 @@ typedef struct my_thread{
     //pointer pointing to start of stack :- head of stack 
     void *stack_head;
     //pointer pointing to next thread block in queue
-    struct mythread *next;
+    struct my_thread *next;
 } my_thread;

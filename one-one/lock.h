@@ -21,6 +21,14 @@ typedef struct myhread_mutex {
 } mythread_mutex;
 
 
+// Spinlock prototypes
+
+//Spinlock Initialization
+void mythread_spinlock_init(mythread_spinlock *);
+//Spinlock Aquire Function Defination
+int mythread_spinlock_lock_aquire(mythread_spinlock *);
+//Spinlock Released Function Defination
+int mythread_spinlock_unlock_released(mythread_spinlock *);
 
 //Mutex Lock Supportive Function Definations
 
@@ -31,14 +39,6 @@ int mythread_mutex_lock_aquire(mythread_mutex *);
 //Mutex Lock Released Function Defination
 int mythread_mutex_lock_released(mythread_mutex *);
 
-// Spinlock prototypes
-
-//Spinlock Initialization
-void mythread_spinlock_init(mythread_spinlock *);
-//Spinlock Aquire Function Defination
-int mythread_spinlock_lock_aquire(mythread_spinlock *);
-//Spinlock Released Function Defination
-int mythread_spinlock_unlock_released(mythread_spinlock *);
 
 
 //Reference - https://github.com/mit-pdos/xv6-public (XV6 Context Saving and then switching)

@@ -14,6 +14,8 @@ void init_queue();
 void enqueue(my_thread *);
 //Checking whether que is empty or not
 int queue_Empty();
+// Traverse all the Queue of threads and printing all threads with their cooresponding id's
+void print_cur_thrds();
 
 
 // Queue for threads created

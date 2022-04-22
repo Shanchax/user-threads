@@ -31,3 +31,23 @@ void enqueue(my_thread *thrd) {
 int queue_Empty() {
     return (queue_of_threads->front == NULL);
 }
+
+// Traverse all the Queue of threads and printing all threads with their cooresponding id's
+void print_cur_thrds() {
+    my_thread *thrd_blk;
+    queue *que = queue_of_threads;
+    thrd_blk = que->front;
+    if (thrd_blk->is_completed == 1){
+            print("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
+            thrd_blk = thrd_blk->next;
+    }
+    else{
+        thrd_blk=thrd_blk->next;
+    }
+    while (thrd_blk != que->front){
+        if (thrd_blk->is_completed == 1)
+            print("Executing...My Thread id is: %d\n", thrd_blk->thread_id);
+        thrd_blk = thrd_blk->next;
+    }
+    return NULL;
+}

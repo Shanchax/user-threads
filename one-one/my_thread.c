@@ -74,7 +74,8 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
 
 //Killing the thread by thread_id when thread and signal passed 
 int mythread_kill(my_thread thread, int signal){
-    int my_thrd_id=thread.thread_id;
+    int my_thrd_id;
+    my_thrd_id=thread.thread_id;
     return primitive_thread_kill(my_thrd_id,signal);
 }
 
@@ -83,10 +84,21 @@ my_thread *mythread_ret_val() {
     my_thread *thrd ;
     int thread_id;
     thread_id=gettid();
-    if (thread_id==getpid()) //When intendented to fetch info of current thread
+    if (thread_id==getpid()){ //When intendented to fetch info of current thread
         return NULL; 
+    }
     thrd = get_thrd_node(thread_id);
     return thrd;
+}
+
+//Exiting Current Thread : Current thread's execution stopping
+void mythread_exit(void *return_val) {
+    my_thread *thrd ;
+    thrd = mythread_ret_val();
+    thrd->ret_val = return_val;
+    if (thrd!=NULL)
+        longjmp(thrd->environment, 1);
+    return;
 }
 
 //Joining Operation performed in mythread_join

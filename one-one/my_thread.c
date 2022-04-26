@@ -33,6 +33,7 @@ void mythread_init(){
     init_queue();
 }
 
+//Initialization of Newly Created Thread
 my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack){
     thread->target_function = target_func;
     thread->args = args;
@@ -40,6 +41,7 @@ my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,c
     thread->parent_id = getpid();  
     thread->next = NULL;
 }
+
 //Thread Creation with routine Function
 int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args) {
     char *mystack;
@@ -70,14 +72,24 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
     return thread->thread_id;
 }
 
+//Killing the thread by thread_id when thread and signal passed 
+int mythread_kill(my_thread thread, int signal){
+    int my_thrd_id=thread.thread_id;
+    return primitive_thread_kill(my_thrd_id,signal);
+}
+
+//Fetching Thread informaton of current thread
 my_thread *mythread_ret_val() {
-    int thread_id = gettid();
-    if (thread_id== getpid())
-        return NULL;
-    my_thread *thrd = get_thrd_node(thread_id);
+    my_thread *thrd ;
+    int thread_id;
+    thread_id=gettid();
+    if (thread_id==getpid()) //When intendented to fetch info of current thread
+        return NULL; 
+    thrd = get_thrd_node(thread_id);
     return thrd;
 }
 
+//Joining Operation performed in mythread_join
 int mythread_join(my_thread *thread, void **return_value) {
     if (thread->is_completed != 1){
         futex_halt_till(&thread->futex_block, thread->thread_id);

@@ -18,8 +18,10 @@ void mythread_exit(void *);
 //Defination for Thread Kill
 int mythread_kill(my_thread, int);
 //Function for setting thread and returning in thread create 
-my_thread *set_thrd(my_thread* thread,void *(*target_func)(void *), void *args,char* mystack);
-//Responsible for returning thread block 
+my_thread *set_thrd(my_thread* ,void *(*target_func)(void *), void *,char* );
+//Responsible for returning thread block
 my_thread *mythread_ret_val();
-//Function responsible for Thread Joinong purpose
-int mythread_join(my_thread *thread, void **return_value);
+//Base Primitive for which calls by mythread_kill for killing thread;
+static int primitive_thread_kill(int thread_id, int signal) {
+    return syscall(SYS_tgkill, getpid(), thread_id, signal);
+}

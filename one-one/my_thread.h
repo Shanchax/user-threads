@@ -21,6 +21,8 @@ int mythread_kill(my_thread, int);
 my_thread *set_thrd(my_thread* ,void *(*target_func)(void *), void *,char* );
 //Responsible for returning thread block
 my_thread *mythread_ret_val();
+//Defination for Thread Equality Checking Function  
+int mythread_chk_equal(my_thread,my_thread);
 //Base Primitive for which calls by mythread_kill for killing thread;
 static int primitive_thread_kill(int thread_id, int signal) {
     return syscall(SYS_tgkill, getpid(), thread_id, signal);

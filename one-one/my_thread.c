@@ -91,6 +91,11 @@ my_thread *mythread_ret_val() {
     return thrd;
 }
 
+//Integer based Boolean function for checking equality of threads based on their id's.  
+int mythread_chk_equal(my_thread thrd1, my_thread thrd2) {
+    return (thrd1.thread_id == thrd2.thread_id);
+}
+
 //Exiting Current Thread : Current thread's execution stopping
 void mythread_exit(void *return_val) {
     my_thread *thrd ;
@@ -105,7 +110,7 @@ void mythread_exit(void *return_val) {
 int mythread_join(my_thread *thread, void **return_value) {
     if (thread->is_completed != 1){
         futex_halt_till(&thread->futex_block, thread->thread_id);
-        if (return_value != NULL)
+        if (return_value)
             *return_value = thread->ret_val;
         free((void *)(thread->stack_head + 1 - MAXSTACKSIZE));
     }

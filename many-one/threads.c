@@ -429,20 +429,20 @@ int mythread_yield(void){
 }
 //sending a signal to thread.
 //not just killing! sending any generic signals
-int mythread_kill(TPROC thread, int sig
+int thread_kill(int id, int sig
 ){
     //block_interrupt();
     sigprof_lock();
     if(sig < 0 || sig > 64)
         return EINVAL;
     
-    if(thread.id == current_running->id )
+    if(id == current_running->id )
         raise(sig);
     
    
     //block_interrupt();
-    //sigprof_lock();
-    TPROC *target_thread = dequeue_id(terminated_queue ,thread.id);
+    sigprof_lock();
+    TPROC *target_thread = dequeue_id(terminated_queue ,id);
     if(target_thread == NULL) {
         // unblock_interrupt();
         sigprof_unlock();

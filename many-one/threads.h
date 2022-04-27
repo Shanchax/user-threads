@@ -9,7 +9,7 @@ void mythread_exit(void *result);
 
 int mythread_join(int id, void **result);
 
-int mythread_kill(TPROC thread, int sig);
+int mythread_kill(int id, int sig);
 
 
 #endif

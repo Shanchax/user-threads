@@ -20,7 +20,7 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *spin_lk) {
     return 1;
 }
 
-//Critical Secrion Unlocking with Mutex's help [Wrapper Unlocking]
+//Critical Secrion Unlocking with Spinlock's help [Wrapper Unlocking]
 int mythread_spinlock_lock_released(mythread_spinlock *spin_lk) {
     int success_ret=1;
     spin_lk->lock_status = UNLOCKED;
@@ -35,7 +35,7 @@ void mythread_mutex_init(mythread_mutex *my_lock) {
 
 
 
-//Critical Secrion Locking with Mutex's help [Wrapper Locking]
+//Critical Section Locking with Mutex's help [Wrapper Locking]
 int mythread_mutex_lock_aquire(mythread_mutex *mutex_lk) {
     int true_status=1;
     int flag_sts;
@@ -50,7 +50,7 @@ int mythread_mutex_lock_aquire(mythread_mutex *mutex_lk) {
     return 1;
 }
 
-//Critical Secrion Unlocking with Mutex's help [Wrapper Unlocking]
+//Critical Section Unlocking with Mutex's help [Wrapper Unlocking]
 int mythread_mutex_lock_released(mythread_mutex *mutex_lk) {
     int success_ret=1;
     mutex_lk->lock_status = UNLOCKED;

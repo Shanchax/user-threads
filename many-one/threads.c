@@ -429,7 +429,7 @@ int mythread_yield(void){
 }
 //sending a signal to thread.
 //not just killing! sending any generic signals
-int thread_kill(TPROC thread, int sig
+int mythread_kill(TPROC thread, int sig
 ){
     //block_interrupt();
     sigprof_lock();

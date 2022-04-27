@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
 	debug("Sending SIGUSR1 to thread...");
 
-    thread_kill(tid,SIGUSR1);
+    mythread_kill(tid,SIGUSR1);
  
 
     while (1) {

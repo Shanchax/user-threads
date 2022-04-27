@@ -1,17 +1,21 @@
 
+#ifndef TCB_H
+#define TCB_H
 
-#include<stdint.h>
-#include<ucontext.h>
-#include<setjmp.h>
 
-//define state which will decide whether our thread is
-//joinable or not
-//join-state
+#include <stdbool.h>
+#include <stdint.h>
+#include <ucontext.h>
 
 #define JOINABLE 1
 #define DETACHED 2
 
-//status of thread: could be running, runnable, waiting, 
+// enum{
+
+//     JOINABLE,
+
+//     DETACHED
+// };
 
 #define RUNNING 1
 #define RUNNABLE 2
@@ -19,31 +23,56 @@
 #define WAITING 4
 #define JOINED 5
 
+// enum{
+
+//     RUNNING,
+
+//     RUNNABLE,
+
+//     TERMINATED,
+
+//     WAITING,
+
+//     JOINED
+// };
+
 
 typedef struct {
-	int id;
-	
-	ucontext_t thread_context;
+    //thread id of the htread ie TPROC
+    int id;
 
-	int has_dynamic_stack;
+    //context of the thread
+    ucontext_t context;
 
-	void *(*target_function)(void*);
+    //set to 1(true) if stack allocation is successful. 0 otherwise
+    int has_dynamic_stack;
 
-	void *argument;
+    //pointer to target function of the thrad.
+    void *(*target_function) (void *);
 
-	int join_state;
+    //JOINABLE or DETACHED
+    int join_state;
 
-	int thread_status;
+    //thread id of the thread that;s waiting for this thread.
+    int wait_id;
 
-	int wait_id;
-	
-	sigjmp_buf env;
+    //status of thread : RUNNING, RUNNABLE..
+    int thread_status;
 
-	void *return_value;
-}TPROC;
+    //arguments to the target function
+    void *argument;
 
-TPROC* create_tcb(void);
+    //ret value 
+    void *return_value;
+
+    //before killing(sending any signal to the thread) , store the pending signals here, 
+    //so that when the thread is scheduled again, the signal will be executed.
+    sigset_t pending_signals;
+
+} TPROC;
+
+TPROC *create_tcb(void);
 
 void delete_tcb(TPROC *block);
 
-
+#endif

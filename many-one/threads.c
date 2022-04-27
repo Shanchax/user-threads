@@ -441,7 +441,7 @@ int thread_kill(TPROC thread, int sig
     
    
     //block_interrupt();
-    sigprof_unlock();
+    //sigprof_lock();
     TPROC *target_thread = dequeue_id(terminated_queue ,thread.id);
     if(target_thread == NULL) {
         // unblock_interrupt();

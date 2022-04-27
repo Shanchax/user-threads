@@ -4,18 +4,21 @@
 #include <unistd.h>
 #include <sys/syscall.h>
 
+#define LOCKED 1
+#define UNLOCKED 0
+
 typedef struct mythread_spinlock {
     /*This is lock_status responsible for Spinlock
-        lock_status : 1 == Spinlock Aquired
-        lock_status : 0 == Spinlock Released or Unblocked 
+        lock_status : LOCKED == Spinlock Aquired
+        lock_status : UNLOCKED == Spinlock Released or Unblocked 
     */
     int lock_status; 
 } mythread_spinlock;
 
 typedef struct myhread_mutex {
     /*This is lock_status responsible for Spinlock
-        lock_status : 1 == Spinlock Aquired
-        lock_status : 0 == Spinlock Released or Unblocked 
+        lock_status : LOCKED == Spinlock Aquired
+        lock_status : UNLOCKED == Spinlock Released or Unblocked 
     */
     int lock_status;
 } mythread_mutex;
@@ -28,7 +31,7 @@ void mythread_spinlock_init(mythread_spinlock *);
 //Spinlock Aquire Function Defination
 int mythread_spinlock_lock_aquire(mythread_spinlock *);
 //Spinlock Released Function Defination
-int mythread_spinlock_unlock_released(mythread_spinlock *);
+int mythread_spinlock_lock_released(mythread_spinlock *);
 
 //Mutex Lock Supportive Function Definations
 

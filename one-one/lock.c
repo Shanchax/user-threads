@@ -1,7 +1,7 @@
 #include "lock.h"
 //SpinLock Lock Initialization
 void mythread_spinlock_init(mythread_spinlock *my_lock) {
-    my_lock->lock_status=0;
+    my_lock->lock_status=UNLOCKED;
 }
 
 
@@ -12,10 +12,10 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *spin_lk) {
     while (true_status) {
         flag_sts = set_context_xchg(&spin_lk->lock_status);
         //When flag_sts (status) flipped to 0, we can aquire resource. 
-        if (flag_sts == 0){
+        if (flag_sts == UNLOCKED){
             break;
         }
-        futex_halt_till(&spin_lk->lock_status, 1);
+        futex_halt_till(&spin_lk->lock_status, LOCKED);
     }
     return 1;
 }
@@ -23,14 +23,14 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *spin_lk) {
 //Critical Secrion Unlocking with Mutex's help [Wrapper Unlocking]
 int mythread_spinlock_lock_released(mythread_spinlock *spin_lk) {
     int success_ret=1;
-    spin_lk->lock_status = 0;
+    spin_lk->lock_status = UNLOCKED;
     futex_wake_proc(&spin_lk->lock_status);
     return success_ret;
 }
 
 //Mutex Lock Initialization
 void mythread_mutex_init(mythread_mutex *my_lock) {
-    my_lock->lock_status=0;
+    my_lock->lock_status=UNLOCKED;
 }
 
 
@@ -42,10 +42,10 @@ int mythread_mutex_lock_aquire(mythread_mutex *mutex_lk) {
     while (true_status) {
         flag_sts = set_context_xchg(&mutex_lk->lock_status);
         //When flag_sts (status) flipped to 0, we can aquire resource. 
-        if (flag_sts == 0){
+        if (flag_sts == UNLOCKED){
             break;
         }
-        futex_halt_till(&mutex_lk->lock_status, 1);
+        futex_halt_till(&mutex_lk->lock_status, LOCKED);
     }
     return 1;
 }
@@ -53,7 +53,7 @@ int mythread_mutex_lock_aquire(mythread_mutex *mutex_lk) {
 //Critical Secrion Unlocking with Mutex's help [Wrapper Unlocking]
 int mythread_mutex_lock_released(mythread_mutex *mutex_lk) {
     int success_ret=1;
-    mutex_lk->lock_status = 0;
+    mutex_lk->lock_status = UNLOCKED;
     futex_wake_proc(&mutex_lk->lock_status);
     return success_ret;
 }

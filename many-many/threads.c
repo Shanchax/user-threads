@@ -1,0 +1,11 @@
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <sched.h>
+#include <unistd.h>
+#include <fcntl.h> 
+#include <ucontext.h>
+#include <sys/types.h>
+#include <time.h>
+#include "lock.h"
+#include "queue.h"

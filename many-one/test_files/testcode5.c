@@ -170,9 +170,9 @@ int main()
     printf("\ntime consumed using threads  : %f ",cpu_time_used);
     printf("\n");
     if(flag == 1){
-        printf(" \n TEST FAILED \n");
+        printf(" \nTestCase-5 FAILED\n");
     }else{
-        printf("\n TEST PASSED \n");
+        printf(" \nTestCase-5 PASSED\n");
     }
 
     

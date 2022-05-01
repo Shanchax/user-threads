@@ -108,11 +108,11 @@ int main(int argc, char **argv)
     printf( "    Shared Variable         = %lld\n", d);
     if (d1 + d2 + d3  == d)
     {
-        printf( "    TEST PASSED\n");
+        printf(" \nTestCase-3 PASSED\n");
     }
     else
     {
-        printf("    TEST FAILED\n");
+        printf(" \nTestCase-3 FAILED\n");
     }
     fflush(stdout);
 

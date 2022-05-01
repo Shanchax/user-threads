@@ -74,9 +74,9 @@ int main(void)
 	printf("\n count without using threads is  %d", count);
 
 	if(cnt == count){
-		printf("\n TEST PASSED");
+		printf(" \nTestCase-2 PASSED\n");
 	}else{
-		printf("TEST FAILED");
+		printf(" \nTestCase-2 FAILED\n");
 	}
 
 	mythread_exit(NULL);

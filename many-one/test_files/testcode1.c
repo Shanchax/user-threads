@@ -69,9 +69,9 @@ int main(void)
 
 	if(sum == normalsum){
 
-		printf(" \n TEST PASSED");
+		printf(" \nTestCase-1 PASSED\n");
 	}else{
-		printf("\n TEST FAILED");
+		printf("\nTestCase-1 FAILED\n");
 	}
 
 	

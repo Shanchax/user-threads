@@ -71,6 +71,7 @@ int main() {
 	}
 
     }
+    printf(" \nTestCase-6 PASSED\n");
 
     return 0;
 

@@ -46,7 +46,7 @@ void print_cur_thrds() {
 my_thread *get_thrd_node(int thread_id) {
     queue *q = queue_of_threads;
     my_thread *th = q->front;
-    while(th != q->rear)
+    while(th)
     {
         if(th->thread_id == thread_id)
             return th;

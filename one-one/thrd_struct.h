@@ -39,4 +39,6 @@ typedef struct my_thread{
     void *stack_head;
     //pointer pointing to next thread block in queue
     struct my_thread *next;
+    //To check whether already joined or not
+    int wait_id;
 } my_thread;

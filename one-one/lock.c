@@ -15,7 +15,6 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *spin_lk) {
         if (flag_sts == UNLOCKED){
             break;
         }
-        futex_halt_till(&spin_lk->lock_status, LOCKED);
     }
     return 1;
 }
@@ -24,7 +23,6 @@ int mythread_spinlock_lock_aquire(mythread_spinlock *spin_lk) {
 int mythread_spinlock_lock_released(mythread_spinlock *spin_lk) {
     int success_ret=1;
     spin_lk->lock_status = UNLOCKED;
-    futex_wake_proc(&spin_lk->lock_status);
     return success_ret;
 }
 

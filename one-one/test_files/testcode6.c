@@ -1,5 +1,5 @@
-#include "queue.h"
-#include "lock.h"
+#include "../queue.h"
+#include "../lock.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

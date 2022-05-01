@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "queue.h"
-#include "lock.h"
+#include "../queue.h"
+#include "../lock.h"
 
 //Race condition Spinlock
 #define arr_size 5

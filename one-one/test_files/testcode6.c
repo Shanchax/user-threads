@@ -105,7 +105,7 @@ int main()
         tid[i] = mythread_create( &threads[i],multi, (void*)(p));
     }
  
-    for (int i = 0; i < MAX_THREAD; ++i) {
+    for (int i = 0; i < MAX_THREAD; i++) {
 	int id = tid[i];
 
 	while (1) {

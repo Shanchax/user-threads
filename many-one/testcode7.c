@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
-#include <pthread.h>
 #include <time.h>
 #include "threads.h"
 #include "lock.h"
@@ -74,6 +73,7 @@ void *thread(void *arg)
 
 	sigseg_unlock();
 
+	sleep(10);
 	debug("Will not reach here...");
 
 	return NULL;

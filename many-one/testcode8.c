@@ -6,6 +6,7 @@
 #include "threads.h"
 #include "lock.h"
 
+//stack smashing was faced when we started dealing with numbers more than 20.
 // thread args
 struct _thread_data_t {
     int tid;
@@ -15,12 +16,10 @@ struct _thread_data_t {
 };
 typedef struct _thread_data_t thread_data_t;
 
-// shared data
 unsigned long long sum;
-//pthread_mutex_t lock_sum;
+
 thread_spinlock lock;
 
-// functions 
 void error( char * msg )
 {
     perror( msg );
@@ -28,25 +27,20 @@ void error( char * msg )
 }
 
 
-
 void * thr_func( void * arg )
 {
     thread_data_t * data = (thread_data_t *) arg;
 
-    // fprintf( stderr, "Created thread %d, floor: %llu, ceiling: %llu, thread_sum=%llu\n", data->tid, data->floor, data->ceiling, data->thread_sum );
-
+    
     // do computation and do to thread
     for( data->floor; data->floor <= data->ceiling; ++(data->floor) )
         data->thread_sum = data->floor * data->thread_sum;
 
-    //pthread_mutex_lock(   &lock_sum );
     thread_spinlock_lock(&lock);
     sum = data->thread_sum * sum;
-    //pthread_mutex_unlock( &lock_sum );
+    
     thread_spinlock_lock(&lock);
 
-    // fprintf( stderr, "Thread %d finish: floor: %llu, ceiling: %llu, thread_sum=%llu\n", data->tid, data->floor, data->ceiling, data->thread_sum );
-    //pthread_exit( NULL );
 }
 
 void init_longs( unsigned long long to_factorialize, unsigned long long * half, unsigned long long * three_fourths, unsigned long long * seven_eighths )
@@ -64,7 +58,7 @@ void init_longs( unsigned long long to_factorialize, unsigned long long * half, 
 
 int main( int argc, char *argv[] ) 
 {
-    //pthread_t threads[4];
+    
     int threads[4];
     thread_data_t thr_data[4];
     unsigned long long to_factorialize;
@@ -72,7 +66,7 @@ int main( int argc, char *argv[] )
     int i, thr_status;
 
     sum = 1;
-    //pthread_mutex_init( &lock_sum, NULL );
+    
     thread_spinlock_init(&lock);
 
     to_factorialize = strtoull( argv[1], NULL, 10 );
@@ -82,16 +76,15 @@ int main( int argc, char *argv[] )
         error( "Invalide range: Can only accept numbers from [1,20]" );
     init_longs( to_factorialize, &half, &three_fourths, &seven_eighths );
 
-    // fprintf( stderr, "Num: %llu\nHalf: %llu\n3/4: %llu\n7/8: %llu\n\n", to_factorialize, half, three_fourths, seven_eighths );
-
-    // four threads, handle from 0-0.5, 0.5-0.75, 0.75-0.875. 0.875-1
+    //so, here's what we're doing : 
+    // four threads, handle from 0-0.5, 0.5-0.75, 0.75-0.875. 0.875-1 fractions!!
         
     // thread1: 1.0      - (.5)
     // thread2: (.5+1)   - (.75)
     // thread3: (.75+1)  - (.875)
     // thread4: (.875+1) - 1.0
 
-    //     init thread datas
+    
     for( i = 0; i < 4; ++i )
     {
         thr_data[i].tid = i;
@@ -110,18 +103,15 @@ int main( int argc, char *argv[] )
     thr_data[3].floor   = seven_eighths + 1;
     thr_data[3].ceiling = to_factorialize;
 
-    //     create threads, add thread id to array
+    // create threads, add thread id to array
     for( i = 0; i < 4; ++i )
     {
-        //thr_status = pthread_create( &threads[i], NULL, thr_func, &thr_data[i] );
+        
         threads[i] = mythread_create(thr_func , &thr_data[i]);
-        // if( thr_status < 0 )
-        //     error( "Creating thread failed" );
+        
     }
 
-    // for( i = 0; i < 4; ++i )
-    //     pthread_join( threads[i], NULL );
-
+        //JOINING ON ALL THREADS.
         for (int i = 0; i < 4; ++i) {
 	        int id = threads[i];
 
@@ -129,7 +119,6 @@ int main( int argc, char *argv[] )
 	        void *res;
 
 	         if (mythread_join(id, &res) > 0) {
-		      //printf("joined thread %d with result %p\n", id, res);
 		
 	      	break;
 	        }

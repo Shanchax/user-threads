@@ -1,6 +1,7 @@
 #include<stdio.h>
-//#include<pthread.h>
 #include "threads.h"
+#include<math.h>
+#include<stdlib.h>
 #define SIZE 7
 #define NO_OF_THREADS	8
 	
@@ -62,8 +63,8 @@ int main()
 	
 	for(j=0; j<NO_OF_THREADS; j++)
 		tid[j] = mythread_create(unique_pair, (void *)j);//each thread will be created and will start executing unique_pair()
-	// for(j=0; j<NO_OF_THREADS; j++)
-	// 	mythread_join(tid[j], NULL);//all the threads created after completing the execution of the function will combine to form the main thread
+	
+	// 	mythread_join(tid[j], NULL);//all the threads 
 
 	for (int i = 0; i < NO_OF_THREADS; ++i) {
 	int id = tid[i];
@@ -71,7 +72,7 @@ int main()
 	while (1) {
 	    void *res;
 	    if (mythread_join(id, &res) > 0) {
-		//printf("joined thread %d with result %p\n", id, res);
+
 		break;
 	    }
 	}

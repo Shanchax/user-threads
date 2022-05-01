@@ -14,7 +14,7 @@ static long sum = 0;
 static void *thread1(void *arg)
 {
 
-    sum = sum + (int)arg;
+    sum = sum + (long int )arg;
 	
 
 }

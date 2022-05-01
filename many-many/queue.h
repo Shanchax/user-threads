@@ -11,9 +11,10 @@ typedef struct QUEUE{
 QUEUE*  queue_init();
 
 /* queue management functions */
-void        enqueue(QUEUE* q_ptr, int t_index);
-int         dequeue(QUEUE* q_ptr);
-void        swap(QUEUE* q_ptr, int i, int j);
-int         pri(QUEUE* q_ptr, int i);
+void delete_queue(QUEUE* q_ptr);
+void enqueue(QUEUE* q_ptr, int t_index);
+int dequeue(QUEUE* q_ptr);
+void swap(QUEUE* q_ptr, int i, int j);
+int pri(QUEUE* q_ptr, int i);
 
 #endif

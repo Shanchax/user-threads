@@ -70,5 +70,10 @@ void swap(QUEUE* q_ptr, int i, int j) {
     q_ptr->q[j] = p;
 }
 
+void delete_queue(QUEUE* q_ptr) {
+    free(q_ptr->q);
+    free(q_ptr);
+}
+
 
 

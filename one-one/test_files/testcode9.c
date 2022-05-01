@@ -11,19 +11,22 @@
 
 struct sigaction new_sig_handler;
 
+int count=0;
+
 void *dummy_func(void *args){
-    sleep(4);
+    for(int i=5; i<0;i++)
+        sleep(1);
     return NULL;
 }
 
 void sig_handle_usr_1(int sig) {
     fflush(stdout);
+    count++;
     pid_t thrd_id=gettid();
     printf("Signal received by thread %d\n", thrd_id);
 }
 
 int main() {
-    int success=1;
     mythread_init();
     my_thread mythread;
     int mythrd_id;
@@ -39,9 +42,10 @@ int main() {
     printf("Killed");
     sleep(1);
     mythread_join(&mythread, NULL);
-    if(success==0)
+    if(count==0)
         printf("\nTestCase-9 PASSED\n");
     else{
+        printf("%d",count);
         perror("Not Able to raise Signal");
         printf("\nTestCase-9 FAILED\n");
     }

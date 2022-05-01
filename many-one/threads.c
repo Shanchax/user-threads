@@ -119,6 +119,14 @@ static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
         if ( ret_val2 == -1) {
 	        abort();
         }
+        for(int i = 0; i < NSIG; i++){
+            if(sigismember(&(current_running->pending_signals), i)) {
+                raise(i);
+                sigdelset(&(current_running->pending_signals), i);
+            }
+        }
+
+        
 	    
     }else{
         exit(EXIT_FAILURE);

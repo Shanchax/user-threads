@@ -90,7 +90,7 @@ static int timer_init(void)
 //this is where we will come when SIGPROF is raised, think of it as a scheduler.
 static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
 {
-    //int old_errno = errno;
+
 
     if (current_running != NULL && queue_size(ready_queue) != 0) {
 
@@ -135,9 +135,7 @@ static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
     
 }
 
-//@brief :
-//@params :
-//
+
 static int context_of_first_thread(void)
 {
     TPROC *dummy;
@@ -161,7 +159,7 @@ static int allocstack(TPROC *block)
 {
 
     void* stack = NULL;
-    //stack = mmap(0, STACKSIZE, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+    
     stack = mmap(0, STACKSIZE, PROT_FLAGS, MMAP_FLAGS, -1, 0);
     if(stack == MAP_FAILED){
         perror("error");
@@ -169,12 +167,6 @@ static int allocstack(TPROC *block)
         return 0;
     }
 
-    // if(mprotect(stack , STACKSIZE , PROT_NONE)){
-    //     munmap(stack, STACKSIZE);
-    //     perror("error");
-    //     //return errno;
-    //     return 0;
-    // }
 
     block->context.uc_stack.ss_flags = 0;
     block->context.uc_stack.ss_size = STACKSIZE;
@@ -333,7 +325,6 @@ void mythread_exit(void *result)
 
         if(setcontext(&current_running->context) == -1){
             perror("setcontext failed");
-            //errno = EINVAL;
             abort();
 
         }
@@ -361,8 +352,8 @@ int mythread_join(int id, void **result)
         TPROC *block = dequeue_id(terminated_queue, id);
         
         sigprof_unlock();
-        //sigprof_lock();
         
+    
 
         if (block == NULL ) {
 	        return 0;
@@ -370,11 +361,7 @@ int mythread_join(int id, void **result)
 
             sigprof_lock();
 
-            // if(block->join_state == DETACHED){
-            //     sigprof_unlock();
-            //     errno = EINVAL;
-            //     return -1;
-            // }
+            
 
             if(block->id == current_running->wait_id){
                 perror("deadlock");
@@ -441,7 +428,7 @@ int mythread_yield(void){
 //not just killing! sending any generic signals
 int mythread_kill(int id, int sig
 ){
-    //block_interrupt();
+    
     sigprof_lock();
     if(sig < 0 || sig > 64)
         return EINVAL;
@@ -450,17 +437,16 @@ int mythread_kill(int id, int sig
         raise(sig);
     
    
-    //block_interrupt();
+    
     //sigprof_lock();
     TPROC *target_thread = dequeue_id(terminated_queue ,id);
     if(target_thread == NULL) {
-        // unblock_interrupt();
+        
         sigprof_unlock();
         return EINVAL;
     }
     //store pending signals
     sigaddset(&target_thread->pending_signals, sig);
-    //unblock_interrupt();
     sigprof_unlock();
     return 0;
 }

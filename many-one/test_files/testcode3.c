@@ -9,7 +9,7 @@
 #define print(str) write(1, str, strlen(str))
 
 //one shared variable and five single variable
-long long d = 0, d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0 , d7 = 0 , d8 = 0 , d9 = 0 , d10 = 0 ,  running = 1;
+long long d = 0, d1 = 0, d2 = 0, d3 = 0, running = 1;
 
 thread_spinlock lock;
 //
@@ -76,7 +76,6 @@ int main(int argc, char **argv)
 
     
     puts("3 threads have been created");
-    // fprintf(stdout, "    Letting threads run\n");
     puts(" Waiting for a while, allowing them to run");
 
     for (long long int i = 0; i < 100000000000; i++)

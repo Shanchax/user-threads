@@ -6,7 +6,7 @@
 //Race condition Mutex
 #define arr_size 5
 
-int counter;
+int counter=0;
 int bound = 1000000;
 mythread_mutex mutex_lk;
 
@@ -14,8 +14,6 @@ mythread_mutex mutex_lk;
 void *race_condition(void *arg)
 {
     int i=0;
-    my_thread *c ;
-    c = mythread_ret_val();
     while (i < bound){
         mythread_mutex_lock_aquire(&mutex_lk);
         counter++;

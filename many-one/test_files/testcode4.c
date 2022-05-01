@@ -64,7 +64,6 @@ int main()
 	for(j=0; j<NO_OF_THREADS; j++)
 		tid[j] = mythread_create(unique_pair, (void *)j);//each thread will be created and will start executing unique_pair()
 	
-	// 	mythread_join(tid[j], NULL);//all the threads 
 
 	for (int i = 0; i < NO_OF_THREADS; ++i) {
 	int id = tid[i];

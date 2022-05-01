@@ -8,6 +8,7 @@
 #include<unistd.h>
 #include <errno.h>
 //testing of mythreadcreate and mythreadjoin.
+//testing of mythread create and join 
 //code credits = https://github.com/wasimusu/cpp_multithreading;
 
 
@@ -64,7 +65,7 @@ int main() {
 	    void *res;
 
 	    if (mythread_join(id, &res) > 0) {
-		printf("joined thread %d with result %p\n", id, res);
+		printf("joined thread %d \n", id);
 		
 		break;
 	    }

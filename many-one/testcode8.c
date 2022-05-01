@@ -27,6 +27,8 @@ void error( char * msg )
     exit( 1 );
 }
 
+
+
 void * thr_func( void * arg )
 {
     thread_data_t * data = (thread_data_t *) arg;
@@ -136,6 +138,12 @@ int main( int argc, char *argv[] )
         }  
 
     printf( "FACTORIAL IS %llu\n", sum );
+
+  
+
+
+
+
 
     return 0;
 }

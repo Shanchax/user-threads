@@ -87,7 +87,7 @@ static int timer_init(void)
     return 1;
 }
 
-
+//this is where we will come when SIGPROF is raised, think of it as a scheduler.
 static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
 {
     //int old_errno = errno;

@@ -9,7 +9,6 @@
 
 static long sum = 0;
 
-//static int cnt = 1;
 
 
 static void *thread1(void *arg)

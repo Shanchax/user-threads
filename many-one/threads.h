@@ -9,6 +9,8 @@ void mythread_exit(void *result);
 
 int mythread_join(int id, void **result);
 
+int mythread_yield(void);
+
 int mythread_kill(int id, int sig);
 
 

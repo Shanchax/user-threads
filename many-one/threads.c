@@ -48,8 +48,6 @@ static void sigprof_unlock(void);
 
 static int timer_init(void)
 {
-   
-
     sigset_t allsignals;
 
     sigfillset(&allsignals);
@@ -117,7 +115,6 @@ static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
 	        abort();
         }
 
-        //errno = old_errno;
         int ret_val2 = setcontext(&current_running->context);
         if ( ret_val2 == -1) {
 	        abort();
@@ -130,6 +127,9 @@ static void new_sigprof_handler(int signum, siginfo_t *nfo, void *context)
     
 }
 
+//@brief :
+//@params :
+//
 static int context_of_first_thread(void)
 {
     TPROC *dummy;
@@ -176,6 +176,9 @@ static int allocstack(TPROC *block)
     return 1;
 }
 
+//the timeout at an interval of INTERVAL will raise SIGPROF.
+//However we don't want our queues to be modified,thus we will
+// "mask" SIGPROF using siproc mask.
 static void sigprof_lock(void)
 {
     sigset_t set;
@@ -248,6 +251,7 @@ int mythread_create(void *(*target_function) (void *), void *arg)
 	
 	initval = 1;
     }
+
 
     // Create a thread control block for the newly created thread.
 
@@ -424,8 +428,6 @@ int mythread_yield(void){
 
     return 0;
 
-
-    //raise(SIGPROF);
 }
 //sending a signal to thread.
 //not just killing! sending any generic signals
@@ -441,7 +443,7 @@ int mythread_kill(int id, int sig
     
    
     //block_interrupt();
-    sigprof_lock();
+    //sigprof_lock();
     TPROC *target_thread = dequeue_id(terminated_queue ,id);
     if(target_thread == NULL) {
         // unblock_interrupt();

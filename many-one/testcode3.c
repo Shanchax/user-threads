@@ -16,6 +16,7 @@ void *thread1(void *arg)
     while (running == 1)
     {
         thread_spinlock_lock(&lock);
+        sleep(1);
         c++;
         thread_spinlock_unlock(&lock);
         c1++;
@@ -31,6 +32,7 @@ void *thread2(void *arg)
 
         thread_spinlock_lock(&lock);
         c++;
+        sleep(1);
         thread_spinlock_unlock(&lock);
         c2++;
         //cmythread_yield();
@@ -45,6 +47,7 @@ void *thread3(void *arg)
 
         thread_spinlock_lock(&lock);
         c++;
+        sleep(1);
         thread_spinlock_unlock(&lock);
         c3++;
         //cmythread_yield();
@@ -113,6 +116,21 @@ int main(int argc, char **argv)
     //mythread_join(tids[3] , &res);
     // mythread_join(tids[4] , &res);
     // mythread_join(tids[5] , &res);
+
+    for (int i = 0; i < 2; ++i) {
+	int id = tids[i];
+
+	while (1) {
+	    void *res;
+
+	    if (mythread_join(id ,&res )) {
+		printf("joined thread %d with result %p\n", id, res);
+		
+		break;
+	    }
+	}
+
+    }
     fprintf(stdout, "    Joined on all 2 threads\n");
 
     fprintf(stdout, "    Thread 1 		= %lld\n", c1);

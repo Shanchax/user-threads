@@ -3,9 +3,9 @@
 #include <signal.h>
 #include <unistd.h>
 #include <pthread.h>
-#include "threads.h"
-#include "tproc.h"
 #include <time.h>
+#include "threads.h"
+#include "lock.h"
 
 static void debug(const char *msg) {
 	time_t t = time(NULL);
@@ -14,30 +14,54 @@ static void debug(const char *msg) {
 
 static void handler(int signum)
 {
-	//pthread_exit(NULL);
-    mythread_exit(NULL);
-    
+	mythread_exit(NULL);
 }
 
-void *thread1(void *arg)
+static void sigseg_lock(void)
+{
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGSEGV);
+
+    int ret_val = sigprocmask(SIG_BLOCK, &set, NULL);
+    if ( ret_val == -1) {
+	perror("sigprof ock failed");
+	abort();
+    }
+}
+
+static void sigseg_unlock(void)
+{
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGSEGV);
+
+    int ret_val = sigprocmask(SIG_UNBLOCK, &set, NULL);
+    if (ret_val == -1) {
+	perror("sigprof unlock failed");
+	abort();
+    }
+}
+
+void *thread(void *arg)
 {
 	static sigset_t mask;
 
 	sigemptyset(&mask);
-	sigaddset(&mask, SIGUSR1);
+	sigaddset(&mask, SIGSEGV);
 
 	debug("Blocking SIGUSR1 in thread...");
-
-    sigprocmask(SIG_BLOCK , &mask , NULL);
 
 	// if (pthread_sigmask(SIG_BLOCK, &mask, NULL) != 0) {
 	// 	perror("pthread_sigmask");
 	// 	exit(1);
 	// }
+	//sigprocmask(SIG_BLOCK , &mask , NULL);
+	sigseg_lock();
 
 	debug("Do something...");
 
-	sleep(10);
+	sleep(1);
 
 	debug("Unblocking SIGUSR1 in thread...");
 
@@ -46,7 +70,9 @@ void *thread1(void *arg)
 	// 	exit(1);
 	// }
 
-    sigprocmask(SIG_UNBLOCK , &mask , NULL);    
+	//sigprocmask(SIG_UNBLOCK , &mask , NULL); 
+
+	sigseg_unlock();
 
 	debug("Will not reach here...");
 
@@ -55,28 +81,29 @@ void *thread1(void *arg)
 
 int main(int argc, char *argv[])
 {
+	//pthread_t tid;
 
-    int tid;
+	int tid;
 
 	signal(SIGUSR1, handler);
 
-
-    int i = rand()%10;
+	// if (pthread_create(&tid, NULL, thread, NULL) != 0) {
+	// 	perror("pthread_create");
+	// 	exit(1);
+	// }
+	int i = rand()%10;
     void *arg = (void *) i;
-    tid = mythread_create(thread1, arg);
-
-    
+	arg = NULL;
+	tid = mythread_create(thread, arg);
 
 	sleep(5);
 
 	debug("Sending SIGUSR1 to thread...");
 
-    //mythread_kill(tid,SIGUSR1);
-    // mythread_kill(tid,SIGUSR1);
-    mythread_kill(tid,SIGUSR1);
- 
+	// pthread_kill(tid, SIGUSR1);
+	mythread_kill(tid,SIGSEGV);
 
-    while (1) {
+	while (1) {
 	    void *res;
 
 	    if (mythread_join(tid, &res) > 0) {
@@ -85,9 +112,8 @@ int main(int argc, char *argv[])
 		break;
 	    }
 	}
-	debug("Thread exited.");
 
-    
+	debug("Thread exited.");
 
 	return 0;
 }

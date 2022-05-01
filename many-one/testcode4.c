@@ -62,9 +62,20 @@ int main()
 	
 	for(j=0; j<NO_OF_THREADS; j++)
 		tid[j] = mythread_create(unique_pair, (void *)j);//each thread will be created and will start executing unique_pair()
-	for(j=0; j<NO_OF_THREADS; j++)
-		mythread_join(tid[j], NULL);//all the threads created after completing the execution of the function will combine to form the main thread
+	// for(j=0; j<NO_OF_THREADS; j++)
+	// 	mythread_join(tid[j], NULL);//all the threads created after completing the execution of the function will combine to form the main thread
 
+	for (int i = 0; i < NO_OF_THREADS; ++i) {
+	int id = tid[i];
 
+	while (1) {
+	    void *res;
+	    if (mythread_join(id, &res) > 0) {
+		//printf("joined thread %d with result %p\n", id, res);
+		break;
+	    }
+	}
+
+	}
 	return 0;
 }

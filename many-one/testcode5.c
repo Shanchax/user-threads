@@ -1,18 +1,23 @@
 
 #include<stdio.h>
+#include<stdlib.h>
 #include<threads.h>
-
+#include<time.h>
  
 // maximum size of matrix
-#define MAX 4
+#define MAX 10
  
 // maximum number of threads
-#define MAX_THREAD 4
+#define MAX_THREAD 10
  
 int matA[MAX][MAX];
 int matB[MAX][MAX];
 int matC[MAX][MAX];
+int rslt[MAX][MAX];
 int step_i = 0;
+
+float mulMat(int mat1[][MAX], int mat2[][MAX]);
+void* multi(void* arg);
  
 void* multi(void* arg)
 {
@@ -21,6 +26,31 @@ void* multi(void* arg)
     for (int j = 0; j < MAX; j++)
       for (int k = 0; k < MAX; k++)
         matC[i][j] += matA[i][k] * matB[k][j];
+}
+//matrix mult without threads
+float mulMat(int mat1[][MAX], int mat2[][MAX]) {
+
+    clock_t start1, end1;
+    double cpu_time_used1;
+    start1 = clock();
+    for (int i = 0; i < MAX; i++) {
+        for (int j = 0; j < MAX; j++) {
+            rslt[i][j] = 0;
+ 
+            for (int k = 0; k < MAX; k++) {
+                rslt[i][j] += mat1[i][k] * mat2[k][j];
+            }
+ 
+            printf("%d ",rslt[i][j]);
+        }
+ 
+        printf("\n");
+    }
+
+    end1 = clock();
+    cpu_time_used1 = ((double) (end1 - start1)) / CLOCKS_PER_SEC;
+
+    return cpu_time_used1;
 }
  
 // Driver Code
@@ -33,66 +63,112 @@ int main()
             matB[i][j] = rand() % 10;
         }
     }
-
-
+    //Displaying matrix A:
     printf("Matrix A : \n");
     for (int i = 0; i < MAX; i++) {
         for (int j = 0; j < MAX; j++)
-            // cout << matA[i][j] << " ";
-            printf("%d" , matA[i][j]);
-        // cout << endl;
+            
+            printf("%d " , matA[i][j]);
+        
         printf("\n");
     }
  
     // Displaying matB
-    // cout << endl
+    
     printf(" Matrix B \n");
          
     for (int i = 0; i < MAX; i++) {
         for (int j = 0; j < MAX; j++)
-            // cout << matB[i][j] << " "; 
-            printf("%d",matB[i][j]);    
-        // cout << endl;
+
+            printf("%d ",matB[i][j]);    
+        
         printf("\n");
 
     }
  
-    // declaring four threads
-    // pthread_t threads[MAX_THREAD];
+    // declaring 10 threads
+    
     int threads[MAX_THREAD];
  
-    // Creating four threads, each evaluating its own part
+    // Creating 10 threads, each evaluating its own part
+    clock_t start, end;
+    double cpu_time_used;
+    start = clock();
     for (int i = 0; i < MAX_THREAD; i++) {
         int* p;
-        //pthread_create(&threads[i], NULL, multi, (void*)(p));
+        
         threads[i] = mythread_create( multi, (void*)(p));
     }
  
-    
     for (int i = 0; i < MAX_THREAD; ++i) {
 	int id = threads[i];
 
 	while (1) {
 	    void *res;
-
 	    if (mythread_join(id, &res) > 0) {
-		printf("joined thread %d with result %p\n", id, res);
 		
 		break;
 	    }
 	}
 
     }
- 
 
-    printf(" Multiplication of matrix A and B is \n:");
+
+    //ending clock here after join because all threads will have finished execution bynow.
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+    printf(" Multiplication of matrix A and B with threads is \n:");
 
     for (int i = 0; i < MAX; i++) {
         for (int j = 0; j < MAX; j++)
-            // cout << matC[i][j] << " "; 
-            printf("%d",matC[i][j] ) ;     
-        // cout << endl;
+            
+            printf("%d ",matC[i][j] ) ;     
+        
         printf("\n");
     }
+
+    printf("Matrix multiplication of matrix A and B  without threads:");
+    printf("\n");
+
+    // clock_t nothreadbegin = clock();
+    // clock_t t;
+    // t = clock();
+    float time = mulMat(matA , matB);
+    // t = clock() - t;
+    // double time_taken = ((double)t)/CLOCKS_PER_SEC; 
+    // clock_t nothreadend = clock();
+
+
+    int flag = 0;
+    for (int i = 0; i < MAX; i++) {
+        for (int j = 0; j < MAX; j++)
+            
+            if(matC[i][j] != rslt[i][j]){
+
+                printf(" \n %d  %d",matC[i][j] , rslt[i][j]);
+
+                flag = 1;
+                break;
+                
+            }  
+        if(flag == 1){
+            break;
+        }    
+
+        
+        //printf("\n");
+    }
+    printf("\n");
+    if(flag == 1){
+        printf(" \n TEST FAILED");
+    }else{
+        printf("\n TEST PASSED");
+    }
+
+    printf("\n time consumed using threads  : %f ",cpu_time_used);
+    printf("\n time consumed without using threads  : %f ",time);
+    
+
     return 0;
 }

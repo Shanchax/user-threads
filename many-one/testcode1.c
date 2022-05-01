@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define GREEN   "\033[32m"
+#define BOLDRED     "\033[1m\033[31m"
+#define RESET   "\033[0m"
 
 
 static long sum = 0;
@@ -15,6 +18,19 @@ static void *thread1(void *arg)
     sum = sum + (int)arg;
 	
 
+}
+
+int sumofnaturalnumbers(int n){
+
+	int sumnew = 0;
+
+	for(int i = 0 ; i < n ; i++){
+
+		sumnew = sumnew + i;
+
+	}
+
+	return sumnew;
 }
 
 
@@ -42,16 +58,24 @@ int main(void)
 	    void *res;
 
 	    if (mythread_join(id, &res) > 0) {
-		printf("joined thread %d with result %p\n", id, res);
+		//printf("joined thread %d with result %p\n", id, res);
 		
 		break;
 	    }
 	}
 
-	
     }
+	 int normalsum = sumofnaturalnumbers(8);
+	printf("sum of the first 8 natural numbers is %ld \n", sum);
 
-	printf("sum of the first 7 natural numbers is %d", sum);
+	if(sum == normalsum){
+
+		printf(" \n TEST PASSED");
+	}else{
+		printf("\n TEST FAILED");
+	}
+
+	
 
 	mythread_exit(NULL);
 }

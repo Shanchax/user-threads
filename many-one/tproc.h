@@ -10,31 +10,11 @@
 #define JOINABLE 1
 #define DETACHED 2
 
-// enum{
-
-//     JOINABLE,
-
-//     DETACHED
-// };
-
 #define RUNNING 1
 #define RUNNABLE 2
 #define TERMINATED 3
 #define WAITING 4
 #define JOINED 5
-
-// enum{
-
-//     RUNNING,
-
-//     RUNNABLE,
-
-//     TERMINATED,
-
-//     WAITING,
-
-//     JOINED
-// };
 
 
 typedef struct {

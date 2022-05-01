@@ -36,20 +36,6 @@ static long count_to_big_without_thread(){
 }
 
 
-static void *thread1(void *arg)
-{
-
-    sum = sum + (int)arg;
-	
-
-}
-
-void *thread2(void *arg)
-{
-    cnt *= 2;
-    
-}
-
 
 int main(void)
 {

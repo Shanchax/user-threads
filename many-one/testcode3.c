@@ -9,121 +9,83 @@
 #define print(str) write(1, str, strlen(str))
 
 //one shared variable and five single variable
-long long c = 0, c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, running = 1;
+long long d = 0, d1 = 0, d2 = 0, d3 = 0, d4 = 0, d5 = 0, d6 = 0 , d7 = 0 , d8 = 0 , d9 = 0 , d10 = 0 ,  running = 1;
 
 thread_spinlock lock;
-
+//
+//will increment d and d1
 void *thread1(void *arg)
 {
     while (running == 1)
     {
         thread_spinlock_lock(&lock);
-        c++;
+        d++;
         thread_spinlock_unlock(&lock);
-        c1++;
+        d1++;
         mythread_yield();
     }
 
 }
-
+//
+//will increment d and d2
 void *thread2(void *arg)
 {
     while (running == 1)
     {
 
         thread_spinlock_lock(&lock);
-        c++;
+        d++;
         thread_spinlock_unlock(&lock);
-        c2++;
+        d2++;
         mythread_yield();
     }
-    //cthread_exit(NULL);
+    
 }
 
+//will increment d and d3
 void *thread3(void *arg)
 {
     while (running == 1)
     {
 
         thread_spinlock_lock(&lock);
-        c++;
+        d++;
         thread_spinlock_unlock(&lock);
-        c3++;
+        d3++;
         mythread_yield();
     }
-    //cthread_exit(NULL);
+    
 }
 
-void *thread4(void *arg)
-{
-    while (running == 1)
-    {
-
-        thread_spinlock_lock(&lock);
-        c++;
-        thread_spinlock_unlock(&lock);
-        c4++;
-        mythread_yield();
-    }
-    //cthread_exit(NULL);
-}
-
-void *thread5(void *arg)
-{
-    while (running == 1)
-    {
-
-        thread_spinlock_lock(&lock);
-        c++;
-        thread_spinlock_unlock(&lock);
-        c5++;
-        mythread_yield();
-    }
-    //cthread_exit(NULL);
-}
 
 int main(int argc, char **argv)
 {
     int tids[6];
 
-    fprintf(stdout, "    Thread Spinlocks\n");
+    puts("RACE CONDITION PROBLEM");
+    printf("\n");
 
-    //cthread_init(1);
-    //cthread_spinlock_init(&lock);
     thread_spinlock_init(&lock);
 
 
     tids[1] = mythread_create(thread1, NULL);
     tids[2] = mythread_create(thread2, NULL);
     tids[3] = mythread_create(thread3, NULL);
-    tids[4] = mythread_create(thread4, NULL);
-    tids[5] = mythread_create(thread5, NULL);
+    
 
-    // for (unsigned long i = 0; i < 8; ++i) {
-	// void *arg = (void *) i;
 
-	// if ((tids[i] = mythread_create(thread1, arg)) == -1) {
-	//     perror("mythread_create");
-	//     exit(EXIT_FAILURE);
-	// }
-    // }
-    fprintf(stdout, "    Created 5 threads\n");
-    fprintf(stdout, "    Letting threads run\n");
+    
+    puts("3 threads have been created");
+    // fprintf(stdout, "    Letting threads run\n");
+    puts(" Waiting for a while, allowing them to run");
 
-    for (long long int i = 0; i < 1000000000; i++)
+    for (long long int i = 0; i < 100000000000; i++)
         ;
 
     running = 0;
 
-    // cthread_join(1);
-    // cthread_join(2);
-    // cthread_join(3);
-    // cthread_join(4);
-    // cthread_join(5);
-    // void *res;
-    // mythread_join(tids[0], &res)
 
-    for (int i = 1; i < 6; ++i) {
+    for (int i = 1; i < 4; ++i) {
 	int id = tids[i];
 
 	while (1) {
@@ -136,22 +98,21 @@ int main(int argc, char **argv)
 	    }
 	}
     }
-    fprintf(stdout, "    Joined on all 5 threads\n");
+    printf( "Joined on all 3 threads \n");
 
-    fprintf(stdout, "    Thread 1 		= %lld\n", c1);
-    fprintf(stdout, "    Thread 2 		= %lld\n", c2);
-    fprintf(stdout, "    Thread 3 		= %lld\n", c3);
-    fprintf(stdout, "    Thread 4 		= %lld\n", c4);
-    fprintf(stdout, "    Thread 5 		= %lld\n", c5);
-    fprintf(stdout, "    t1 + t2 + t3 + t4 + t5  = %lld\n", c1 + c2 + c3 + c4 + c5);
-    fprintf(stdout, "    Shared Variable         = %lld\n", c);
-    if (c1 + c2 + c3 + c4 + c5 == c)
+    printf("    VALUE of d1 		= %lld\n", d1);
+    printf( "    VALUE of d2 		= %lld\n", d2);
+    printf( "    VALUE of d3 		= %lld\n", d3);
+    
+    printf( "    Sum of all di  = %lld\n", d1 + d2 + d3 );
+    printf( "    Shared Variable         = %lld\n", d);
+    if (d1 + d2 + d3  == d)
     {
-        fprintf(stdout, "    TEST PASSED\n");
+        printf( "    TEST PASSED\n");
     }
     else
     {
-        fprintf(stdout, "    Test failed\n");
+        printf("    TEST FAILED\n");
     }
     fflush(stdout);
 

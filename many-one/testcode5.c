@@ -1,7 +1,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<threads.h>
+#include"threads.h"
 #include<time.h>
  
 // maximum size of matrix
@@ -27,6 +27,7 @@ void* multi(void* arg)
       for (int k = 0; k < MAX; k++)
         matC[i][j] += matA[i][k] * matB[k][j];
 }
+
 //matrix mult without threads
 float mulMat(int mat1[][MAX], int mat2[][MAX]) {
 
@@ -52,6 +53,7 @@ float mulMat(int mat1[][MAX], int mat2[][MAX]) {
 
     return cpu_time_used1;
 }
+
  
 // Driver Code
 int main()
@@ -157,7 +159,7 @@ int main()
         }    
 
         
-        //printf("\n");
+        
     }
     printf("\n");
     if(flag == 1){
@@ -167,7 +169,7 @@ int main()
     }
 
     printf("\n time consumed using threads  : %f ",cpu_time_used);
-    printf("\n time consumed without using threads  : %f ",time);
+    
     
 
     return 0;

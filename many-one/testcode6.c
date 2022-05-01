@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include<string.h>
 #include<unistd.h>
+#include <errno.h>
 //testing of mythreadcreate and mythreadjoin.
 //code credits = https://github.com/wasimusu/cpp_multithreading;
 
@@ -29,9 +30,9 @@ void capture_image(const int device_id) {
     thread_spinlock_unlock(&lock);
 
     // Pretend to do some work (capture image)
-    // ..
+    
     sleep(1);
-    // ..
+    
 }
 
 void* runner( void* arg){
@@ -41,8 +42,6 @@ void* runner( void* arg){
 
 int main() {
     // Syncing two cameras. We can sync multiple cameras as well.
-    // thread t1(capture_image, 1);
-    // thread t2(capture_image, 2);
 
     int threads[19];
 
@@ -51,7 +50,8 @@ int main() {
 
 	if ((threads[i] = mythread_create(runner, arg)) == -1) {
 	    perror("mythread_create");
-	    //exit(EXIT_FAILURE);
+        return errno;
+	    
 	}
     }
 

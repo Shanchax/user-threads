@@ -17,7 +17,6 @@
 //Function resposible for execution of function passed to thread
 int mythread_run(void *cur_thrd) {
     my_thread *new_thrd = (my_thread *)cur_thrd;
-    enqueue(new_thrd);
     if (setjmp(new_thrd->environment) != 0) {
         printf("Executing Thread with thread_id- %d , exited safely\n", new_thrd->thread_id);
         new_thrd->is_completed = 1;
@@ -62,6 +61,8 @@ int mythread_create(my_thread *thread, void *(*target_func)(void *), void *args)
     thread->stack_head = my_stack_head_ptr;
     
     thread=set_thrd(thread,target_func,args,mystack);
+
+    enqueue(thread);
     
     
     thread->thread_id = clone(mythread_run, my_stack_head_ptr, 
@@ -114,23 +115,12 @@ void mythread_exit(void *return_val) {
 
 //Joining Operation performed in mythread_join
 int mythread_join(my_thread *thread, void **return_value) {
-    //----------------------------------------------------
     if(thread->wait_id==-1){
         return EINVAL;
     }
     else{
         thread->wait_id=-1;
     }
-    //printf("Inside join=%d",thread->thread_id);
-    if(queue_of_threads->front)
-        print_cur_thrds();
-    my_thread *new_thrd= get_thrd_node(thread->thread_id);
-    //printf("bshbjbas===%d\n",new_thrd->thread_id);
-    if(new_thrd == NULL){
-        //printf("Node not found");
-        return ESRCH;
-    }
-    //----------------------------------------------------
     if (thread->is_completed != 1){
         futex_halt_till(&thread->futex_block, thread->thread_id);
         if (return_value)

@@ -3,6 +3,7 @@
 #include<stdlib.h>
 #include"threads.h"
 #include<time.h>
+#include<sys/time.h>
  
 // maximum size of matrix
 #define MAX 10
@@ -120,7 +121,7 @@ int main()
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 
-    printf(" Multiplication of matrix A and B with threads is \n:");
+    printf("Multiplication of matrix A and B with threads is :\n");
 
     for (int i = 0; i < MAX; i++) {
         for (int j = 0; j < MAX; j++)
@@ -133,13 +134,17 @@ int main()
     printf("Matrix multiplication of matrix A and B  without threads:");
     printf("\n");
 
-    // clock_t nothreadbegin = clock();
-    // clock_t t;
-    // t = clock();
+    struct timeval start2, end2;
+    gettimeofday(&start2, NULL); 
     float time = mulMat(matA , matB);
-    // t = clock() - t;
-    // double time_taken = ((double)t)/CLOCKS_PER_SEC; 
-    // clock_t nothreadend = clock();
+    gettimeofday(&end2, NULL);
+    long seconds = (end2.tv_sec - start2.tv_sec);
+    float micros = ((seconds * 1000000) + end2.tv_usec) - (start2.tv_usec);
+    micros = micros / 1000000;
+    printf("\n\nTime elapsed without threads: %f seconds\n", micros);
+    
+    
+    
 
 
     int flag = 0;
@@ -161,14 +166,15 @@ int main()
         
         
     }
+
+    printf("\ntime consumed using threads  : %f ",cpu_time_used);
     printf("\n");
     if(flag == 1){
-        printf(" \n TEST FAILED");
+        printf(" \n TEST FAILED \n");
     }else{
-        printf("\n TEST PASSED");
+        printf("\n TEST PASSED \n");
     }
 
-    printf("\n time consumed using threads  : %f ",cpu_time_used);
     
     
 
